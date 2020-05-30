@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using AutoMapper;
 
 namespace kartzmax
 {
@@ -22,7 +23,11 @@ namespace kartzmax
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Add Newtonsoft
             services.AddControllers().AddNewtonsoftJson((x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore));
+
+            // Add Automapper
+            services.AddAutoMapper(typeof(Startup));
 
 
 
