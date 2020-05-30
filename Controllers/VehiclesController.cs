@@ -5,30 +5,30 @@ using kartzmax.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace kartzmax.Controllers
-{
-    public class VehiclesController : Controller
-    {
+namespace kartzmax.Controllers {
+    public class VehiclesController : Controller {
 
         // Inject KartzMax DbContext into the Constructor
         private readonly KartzMaxDbContext context;
 
-        public VehiclesController(KartzMaxDbContext context)
-        {
+        public VehiclesController (KartzMaxDbContext context) {
             this.context = context;
 
         }
 
+        [HttpPost ("api/vehicles")]
+        public IActionResult CreateVehicle ( Vehicle vehicle) {
 
+            return Ok (vehicle);
 
-        [HttpGet("api/vehicles")]
-        public async Task<IEnumerable<Vehicle>> GetVehicles()
-        {
+        }
 
-            var vehicles = await context.Vehicles.ToListAsync();
+        [HttpGet ("api/vehicles")]
+        public async Task<IEnumerable<Vehicle>> GetVehicles () {
+
+            var vehicles = await context.Vehicles.ToListAsync ();
 
             return vehicles;
-
 
         }
 
