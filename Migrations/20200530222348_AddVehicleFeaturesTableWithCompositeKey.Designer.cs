@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using kartzmax.Persistence;
 
 namespace kartzmax.Migrations
 {
     [DbContext(typeof(KartzMaxDbContext))]
-    partial class KartzMaxDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200530222348_AddVehicleFeaturesTableWithCompositeKey")]
+    partial class AddVehicleFeaturesTableWithCompositeKey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
