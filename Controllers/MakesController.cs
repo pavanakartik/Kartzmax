@@ -1,30 +1,31 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
+using kartzmax.Controllers.Resources;
 using kartzmax.Core.Models;
 using kartzmax.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace kartzmax.Controllers
-{
-    public class MakesController : Controller
-    {
+namespace kartzmax.Controllers {
+    public class MakesController : Controller {
         private readonly KartzMaxDbContext context;
+        private readonly IMapper mapper;
 
         // Inject  KartzMaxDbContext 
-        public MakesController(KartzMaxDbContext context)
-        {
+        // Inject Automapper
+        public MakesController (KartzMaxDbContext context, IMapper mapper) {
+            this.mapper = mapper;
             this.context = context;
 
         }
 
-        [HttpGet("api/makes")]
-        public async Task<IEnumerable<Make>> GetMakes()
-        {
+        [HttpGet ("api/makes")]
+        public async Task<IEnumerable<MakeResource>> GetMakes () {
 
-            var makes = await context.Makes.Include(m => m.Models).ToListAsync();
+            var makes = await context.Makes.Include (m => m.Models).ToListAsync ();
 
-            return makes;
+            return mapper.Map<List<Make>, List<MakeResource>>(makes);
         }
     }
 }
