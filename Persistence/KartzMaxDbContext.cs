@@ -1,17 +1,18 @@
 using kartzmax.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace kartzmax.Persistence
-{
-    public class KartzMaxDbContext : DbContext
-    {
+namespace kartzmax.Persistence {
+    public class KartzMaxDbContext : DbContext {
 
-         public KartzMaxDbContext(DbContextOptions<KartzMaxDbContext> options) : base(options)
-         {
-             
-         }
+        public KartzMaxDbContext (DbContextOptions<KartzMaxDbContext> options) : base (options) {
 
-         public DbSet<Feature> Features { get; set; }
-        
+        }
+
+        public DbSet<Feature> Features { get; set; }
+
+        public DbSet<Make> Makes { get; set; }
+
+        public DbSet<Model> Models { get; set; }
+
     }
 }
