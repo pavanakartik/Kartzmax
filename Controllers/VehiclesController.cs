@@ -23,18 +23,11 @@ namespace kartzmax.Controllers
 
         }
 
-        [HttpPost("api/vehicles")]
-        public IActionResult CreateVehicle([FromBody] VehicleResource vehicleResource)
-        {
+     
 
 
-            var vehicle = mapper.Map<VehicleResource, Vehicle>(vehicleResource);
 
-            return Ok(vehicle);
-
-        }
-
-        [HttpGet("api/vehicles")]
+       [HttpGet("api/vehicles")]
         public async Task<IEnumerable<Vehicle>> GetVehicles()
         {
 
@@ -43,6 +36,27 @@ namespace kartzmax.Controllers
             return vehicles;
 
         }
+
+
+          [HttpPost("api/vehicles")]
+        public async Task<IActionResult> CreateVehicle([FromBody] VehicleResource  vehicleResource)
+        {
+            var vehicle  = mapper.Map<VehicleResource, Vehicle>(vehicleResource); 
+
+            context.Vehicles.Add(vehicle);
+
+           await context.SaveChangesAsync();
+
+           var result = mapper.Map<Vehicle, VehicleResource>(vehicle);
+
+           return Ok(result);
+        }
+
+
+    
+
+
+
 
     }
 }

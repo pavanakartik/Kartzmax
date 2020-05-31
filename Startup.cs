@@ -24,8 +24,8 @@ namespace kartzmax
         public void ConfigureServices(IServiceCollection services)
         {
             // Add Newtonsoft
-         //   services.AddControllers().AddNewtonsoftJson((x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore));
-                 services.AddControllers().AddNewtonsoftJson();
+          services.AddControllers().AddNewtonsoftJson((x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore));
+             //    services.AddControllers().AddNewtonsoftJson();
             // Add Automapper
             services.AddAutoMapper(typeof(Startup));
 
