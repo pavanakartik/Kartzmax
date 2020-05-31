@@ -8,21 +8,20 @@ namespace kartzmax.Mapping {
 
         public MappingProfile () {
             // Domain to Api
+            // Domain to API Resource
             CreateMap<Make, MakeResource> ();
             CreateMap<Model, ModelResource> ();
-
             CreateMap<Feature, FeatureResource> ();
-             CreateMap<Vehicle, VehicleResource>()
-              .ForMember(vr => vr.Contact, opt => opt.MapFrom(v => new ContactResource { Name = v.ContactName, Email = v.ContactEmail, Phone = v.ContactPhone } ))
-              .ForMember(vr => vr.Features, opt => opt.MapFrom(v => v.Features.Select(vf => vf.FeatureId)));
-
-            // Api  Resource to Domain
-
-            // WHY WE USED FORMEMBER IS BECAUSE  VehicleResource and Vehicle are not Identical Objects  we refer a Contact Object in Vehicle Resource
-            // so to map those attributes to domain we do  use ForMember 
+            CreateMap<Vehicle, SaveVehicleResource> ()
+                .ForMember (vr => vr.Contact, opt => opt.MapFrom (v => new ContactResource { Name = v.ContactName, Email = v.ContactEmail, Phone = v.ContactPhone }))
+                .ForMember (vr => vr.Features, opt => opt.MapFrom (v => v.Features.Select (vf => vf.FeatureId)));
+            CreateMap<Vehicle, VehicleResource> ()
+                .ForMember (vr => vr.Make, opt => opt.MapFrom (v => v.Model.Make))
+                .ForMember (vr => vr.Contact, opt => opt.MapFrom (v => new ContactResource { Name = v.ContactName, Email = v.ContactEmail, Phone = v.ContactPhone }))
+                .ForMember (vr => vr.Features, opt => opt.MapFrom (v => v.Features.Select (vf => new FeatureResource { Id = vf.Feature.Id, Name = vf.Feature.Name })));
 
             // API Resource to Domain
-            CreateMap<VehicleResource, Vehicle> ()
+            CreateMap<SaveVehicleResource, Vehicle> ()
                 .ForMember (v => v.Id, opt => opt.Ignore ())
                 .ForMember (v => v.ContactName, opt => opt.MapFrom (vr => vr.Contact.Name))
                 .ForMember (v => v.ContactEmail, opt => opt.MapFrom (vr => vr.Contact.Email))
@@ -40,6 +39,5 @@ namespace kartzmax.Mapping {
                         v.Features.Add (f);
                 });
         }
-
     }
 }

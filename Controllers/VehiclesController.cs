@@ -95,14 +95,19 @@ namespace kartzmax.Controllers {
 
         [HttpGet ("api/vehicles/{id}")]
         public async Task<IActionResult> GetVehicle (int id) {
-            var vehicle = await context.Vehicles.Include (v => v.Features).SingleOrDefaultAsync (v => v.Id == id);
+             var vehicle = await context.Vehicles
+          .Include(v => v.Features)
+            .ThenInclude(vf => vf.Feature)
+          .Include(v => v.Model)
+            .ThenInclude(m => m.Make)
+          .SingleOrDefaultAsync(v => v.Id == id);
 
-            if (vehicle == null)
-                return NotFound ();
+        if (vehicle == null)
+          return NotFound();
 
-            var vehicleResource = mapper.Map<Vehicle, VehicleResource> (vehicle);
+        var vehicleResource = mapper.Map<Vehicle, VehicleResource>(vehicle);
 
-            return Ok (vehicleResource);
+        return Ok(vehicleResource);
         }
 
     }
