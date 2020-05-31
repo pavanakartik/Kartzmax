@@ -33,14 +33,12 @@ namespace kartzmax.Controllers {
         public async Task<IActionResult> CreateVehicle ([FromBody] VehicleResource vehicleResource)
 
         {
-            
 
-
-            if(!ModelState.IsValid){
-                 return BadRequest (ModelState);
+            if (!ModelState.IsValid) {
+                return BadRequest (ModelState);
             }
 
-               // validation which is kind of a overkill  will get through this later
+            // validation which is kind of a overkill  will get through this later
             /*var model=  await context.Models.FindAsync(vehicleResource.ModelId);
 
             if(model==null){
@@ -51,6 +49,24 @@ namespace kartzmax.Controllers {
             var vehicle = mapper.Map<VehicleResource, Vehicle> (vehicleResource);
 
             context.Vehicles.Add (vehicle);
+
+            await context.SaveChangesAsync ();
+
+            var result = mapper.Map<Vehicle, VehicleResource> (vehicle);
+
+            return Ok (result);
+        }
+
+        [HttpPut ("api/vehicles/{id}")]
+        public async Task<IActionResult> UpdateVehicle (int id, [FromBody] VehicleResource vehicleResource)
+
+        {
+
+            if (!ModelState.IsValid)
+                return BadRequest (ModelState);
+
+            var vehicle = await context.Vehicles.Include (v => v.Features).SingleOrDefaultAsync (v => v.Id == id);
+            mapper.Map<VehicleResource, Vehicle> (vehicleResource, vehicle);
 
             await context.SaveChangesAsync ();
 
