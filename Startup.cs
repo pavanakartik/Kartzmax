@@ -24,14 +24,17 @@ namespace kartzmax
         public void ConfigureServices(IServiceCollection services)
         {
             // Add Newtonsoft
-          services.AddControllers().AddNewtonsoftJson((x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore));
-             //    services.AddControllers().AddNewtonsoftJson();
+            services.AddControllers().AddNewtonsoftJson((x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore));
+            //    services.AddControllers().AddNewtonsoftJson();
             // Add Automapper
             services.AddAutoMapper(typeof(Startup));
 
 
 
             services.AddControllersWithViews();
+
+            // add dependenc injection
+            services.AddScoped<IVehicleRepository, VehicleRepository>();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {

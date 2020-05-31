@@ -16,9 +16,11 @@ namespace kartzmax.Controllers
         // Inject KartzMax DbContext into the Constructor
         private readonly KartzMaxDbContext context;
         private readonly IMapper mapper;
+        private readonly IVehicleRepository repository;
 
-        public VehiclesController(KartzMaxDbContext context, IMapper mapper)
+        public VehiclesController(KartzMaxDbContext context, IMapper mapper, IVehicleRepository repository)
         {
+            this.repository = repository;
             this.mapper = mapper;
             this.context = context;
 
@@ -46,30 +48,22 @@ namespace kartzmax.Controllers
             context.Vehicles.Add(vehicle);
             await context.SaveChangesAsync();
 
-            vehicle = await context.Vehicles
-              .Include(v => v.Features)
-                .ThenInclude(vf => vf.Feature)
-              .Include(v => v.Model)
-                .ThenInclude(m => m.Make)
-              .SingleOrDefaultAsync(v => v.Id == vehicle.Id);
+            vehicle = await repository.GetVehicle(vehicle.Id);
+
+
 
             var result = mapper.Map<Vehicle, VehicleResource>(vehicle);
 
             return Ok(result);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("api/vehicles/{id}")]
         public async Task<IActionResult> UpdateVehicle(int id, [FromBody] SaveVehicleResource vehicleResource)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var vehicle = await context.Vehicles
-              .Include(v => v.Features)
-                .ThenInclude(vf => vf.Feature)
-              .Include(v => v.Model)
-                .ThenInclude(m => m.Make)
-              .SingleOrDefaultAsync(v => v.Id == id);
+            var vehicle = await repository.GetVehicle(id);
 
             if (vehicle == null)
                 return NotFound();
@@ -82,9 +76,10 @@ namespace kartzmax.Controllers
             var result = mapper.Map<Vehicle, VehicleResource>(vehicle);
 
             return Ok(result);
+
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("api/vehicles/{id}")]
         public async Task<IActionResult> DeleteVehicle(int id)
         {
             var vehicle = await context.Vehicles.FindAsync(id);
@@ -98,15 +93,11 @@ namespace kartzmax.Controllers
             return Ok(id);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("api/vehicles/{id}")]
         public async Task<IActionResult> GetVehicle(int id)
         {
-            var vehicle = await context.Vehicles
-              .Include(v => v.Features)
-                .ThenInclude(vf => vf.Feature)
-              .Include(v => v.Model)
-                .ThenInclude(m => m.Make)
-              .SingleOrDefaultAsync(v => v.Id == id);
+            var vehicle = await repository.GetVehicle(id);
+
 
             if (vehicle == null)
                 return NotFound();
