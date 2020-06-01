@@ -8,6 +8,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AutoMapper;
+using kartzmax.Core;
+using kartzmax.Core.Models;
+
 
 namespace kartzmax
 {
@@ -28,7 +31,12 @@ namespace kartzmax
             //    services.AddControllers().AddNewtonsoftJson();
             // Add Automapper
             services.AddAutoMapper(typeof(Startup));
+            services.AddScoped<IPhotoRepository, PhotoRepository>();
 
+            services.AddTransient<IPhotoService, PhotoService>();
+
+            services.AddTransient<IPhotoStorage, FileSystemPhotoStorage>();
+            services.Configure<PhotoSettings>(Configuration.GetSection("PhotoSettings"));
 
 
             services.AddControllersWithViews();

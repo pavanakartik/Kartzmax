@@ -1,82 +1,87 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using kartzmax.Controllers.Resources;
+using kartzmax.Core;
 using kartzmax.Core.Models;
 using kartzmax.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+
 
 namespace kartzmax.Controllers
 {
+
+    [Route("api/vehicles/{vehicleId}/photos")]
+
     public class PhotosController : Controller
     {
-        // Inject KartzMaxDbContext , I
-        private readonly KartzMaxDbContext context;
         private readonly IWebHostEnvironment host;
-        private readonly IVehicleRepository repository;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IVehicleRepository repository; private readonly IUnitOfWork unitOfWork;
+        private readonly PhotoSettings photoSettings;
         private readonly IMapper mapper;
+        private readonly IPhotoRepository photoRepository;
 
-        private readonly int MAX_BYTES = 1 * 1024 * 1024;
-        private readonly string[] ACCEPTED_FILE_TYPES = new[] { ".jpg", ".jpeg", ".png" };
-
-        public PhotosController(KartzMaxDbContext context, IWebHostEnvironment host, IVehicleRepository repository, IUnitOfWork unitOfWork,
-          IMapper mapper)
+        private readonly IPhotoService photoService;
+        public PhotosController(IWebHostEnvironment host,
+                                IVehicleRepository repository,
+                                IPhotoRepository photoRepository,
+                                IMapper mapper,
+                                IOptionsSnapshot<PhotoSettings> options,
+                                IPhotoService photoService)
         {
+            this.photoRepository = photoRepository;
+
+            this.photoSettings = options.Value;
             this.mapper = mapper;
-            this.unitOfWork = unitOfWork;
+
             this.repository = repository;
-
-
             this.host = host;
 
-            this.context = context;
+            this.photoService = photoService;
 
         }
 
-        [HttpPost("api/vehicles/{vehicleId}/photos")]
+        [HttpPost]
         public async Task<IActionResult> Upload(int vehicleId, IFormFile file)
         {
-
             var vehicle = await repository.GetVehicle(vehicleId, includeRelated: false);
 
             if (vehicle == null)
                 return NotFound();
 
+            // check to see if fileinput is null or not
 
-            if (file == null) return BadRequest("Null file");
-            if (file.Length == 0) return BadRequest("Empty file");
-            if (file.Length > MAX_BYTES) return BadRequest("Max file size exceeded");
-            if (!ACCEPTED_FILE_TYPES.Any(s => s == Path.GetExtension(file.FileName))) return BadRequest("Invalid file type.");
+            if (file == null) return BadRequest("File Not Found");
+            if (file.Length == 0) return BadRequest("EmptyFile");
+
+           if (file.Length > photoSettings.MaxBytes) return BadRequest("Maximum File Size Exceeded");
+
+            if (!photoSettings.IsSupported(file.FileName)) return BadRequest("Invalid file name");
 
             var uploadsFolderPath = Path.Combine(host.WebRootPath, "uploads");
 
-            if (!Directory.Exists(uploadsFolderPath))
-                Directory.CreateDirectory(uploadsFolderPath);
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
 
-            var filePath = Path.Combine(uploadsFolderPath, fileName);
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-
-                await file.CopyToAsync(stream);
-
-            }
-
-            var photo = new Photo { FileName = fileName };
-
-            vehicle.Photos.Add(photo);
-
-            await unitOfWork.CompleteAsync();
+            var photo = await photoService.UploadPhoto(vehicle, file, uploadsFolderPath);
 
             return Ok(mapper.Map<Photo, PhotoResource>(photo));
 
         }
+
+        [HttpGet]
+        public async Task<IEnumerable<PhotoResource>> GetPhotos(int vehicleId)
+        {
+
+            var photos = await photoRepository.GetPhotos(vehicleId);
+
+            return mapper.Map<IEnumerable<Photo>, IEnumerable<PhotoResource>>(photos);
+        }
+
 
     }
 }
