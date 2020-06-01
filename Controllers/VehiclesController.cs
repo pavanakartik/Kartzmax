@@ -73,6 +73,7 @@ namespace kartzmax.Controllers
 
             await unitOfWork.CompleteAsync();
 
+            vehicle = await repository.GetVehicle(vehicle.Id);
             var result = mapper.Map<Vehicle, VehicleResource>(vehicle);
 
             return Ok(result);
@@ -96,14 +97,14 @@ namespace kartzmax.Controllers
         [HttpGet("api/vehicles/{id}")]
         public async Task<IActionResult> GetVehicle(int id)
         {
-             var vehicle = await repository.GetVehicle(id);
+            var vehicle = await repository.GetVehicle(id);
 
-      if (vehicle == null)
-        return NotFound();
+            if (vehicle == null)
+                return NotFound();
 
-      var vehicleResource = mapper.Map<Vehicle, VehicleResource>(vehicle);
+            var vehicleResource = mapper.Map<Vehicle, VehicleResource>(vehicle);
 
-      return Ok(vehicleResource);
+            return Ok(vehicleResource);
         }
 
     }
