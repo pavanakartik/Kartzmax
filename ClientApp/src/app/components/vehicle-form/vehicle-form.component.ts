@@ -12,7 +12,8 @@ export class VehicleFormComponent implements OnInit {
   vehicle: any = {};
   models: any;
   features: any;
-  constructor(private vehicleService: VehicleService, ) { }
+  contact : any ={};
+  constructor(private vehicleService: VehicleService) { }
 
   ngOnInit() {
 
