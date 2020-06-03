@@ -1,4 +1,4 @@
-import { MakeService } from './services/make.service';
+import { VehicleService } from './services/vehicle.service';
 import { VehicleFormComponent } from './components/vehicle-form/vehicle-form.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -11,7 +11,6 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
 import { CounterComponent } from './counter/counter.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
-import { FeatureService } from './services/feature.service';
 
 @NgModule({
   declarations: [
@@ -28,13 +27,13 @@ import { FeatureService } from './services/feature.service';
     FormsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
-      {path: 'vehicles/new', component : VehicleFormComponent},
+      { path: 'vehicles/new', component: VehicleFormComponent },
 
       { path: 'counter', component: CounterComponent },
       { path: 'fetch-data', component: FetchDataComponent },
     ])
   ],
-  providers: [MakeService, FeatureService],
+  providers: [VehicleService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
