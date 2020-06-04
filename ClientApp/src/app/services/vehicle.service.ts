@@ -14,7 +14,13 @@ export class VehicleService {
 
   getMakes() {
 
-    return this.http.get('api/makes');
+    var makes= this.http.get('api/makes');
+
+    console.log("Makes: "+ makes);
+
+    return makes ;
+
+  
   }
 
   getFeatures(){
