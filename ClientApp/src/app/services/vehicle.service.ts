@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 
@@ -25,5 +25,14 @@ export class VehicleService {
 
   getFeatures(){
     return  this.http.get("api/features");
+ }
+
+ create(vehicle){
+
+  return this.http.post("api/vehicles", vehicle, {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json'
+    })
+  });
  }
 }

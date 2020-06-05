@@ -7,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./vehicle-form.component.css']
 })
 export class VehicleFormComponent implements OnInit {
-  makes: any; 
+  makes: any;
   models: any;
   features: any;
   vehicle: any = {
@@ -18,10 +18,10 @@ export class VehicleFormComponent implements OnInit {
   constructor(private vehicleService: VehicleService) { }
 
   ngOnInit() {
-    this.vehicleService.getMakes().subscribe(makes => 
+    this.vehicleService.getMakes().subscribe(makes =>
       this.makes = makes);
 
-    this.vehicleService.getFeatures().subscribe(features => 
+    this.vehicleService.getFeatures().subscribe(features =>
       this.features = features);
   }
 
@@ -38,5 +38,14 @@ export class VehicleFormComponent implements OnInit {
       var index = this.vehicle.features.indexOf(featureId);
       this.vehicle.features.splice(index, 1);
     }
+  }
+
+
+  submit() {
+
+    this.vehicleService.create(this.vehicle).subscribe(x => console.log(x));
+   // this.vehicleService.create(this.vehicle);
+
+
   }
 }
