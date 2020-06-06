@@ -1,5 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { SaveVehicle } from '../models/vehicle';
+
 
 
 
@@ -8,31 +10,49 @@ import { Injectable } from '@angular/core';
 })
 export class VehicleService {
 
-  constructor(private http: HttpClient) {
-
-  }
-
+  constructor(private http: HttpClient) { }
   getMakes() {
+    // return this.http.get('api/makes').pipe(map((response: any) => response.json()));
 
-    var makes= this.http.get('api/makes');
-
-    console.log("Makes: "+ makes);
-
-    return makes ;
-
-  
+    return this.http.get('api/makes');
   }
 
-  getFeatures(){
-    return  this.http.get("api/features");
- }
 
- create(vehicle){
+  getFeatures() {
+    return this.http.get("/api/features");
+  }
 
-  return this.http.post("api/vehicles", vehicle, {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json'
-    })
-  });
- }
+
+  getVehicle(id) {
+    return this.http.get("api/vehicles/" + id);
+  }
+
+
+
+
+  create(vehicle) {
+
+
+    return this.http.post("api/vehicles", vehicle, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    });
+  }
+
+  update(vehicle: SaveVehicle) {
+    return this.http.put('api/vehicles/' + vehicle.id, vehicle
+    );
+  }
+
+  delete(id) {
+
+    return this.http.delete('api/vehicles/' + id);
+  }
+
+
+
+
+
 }
+
