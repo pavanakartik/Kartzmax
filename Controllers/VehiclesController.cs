@@ -29,20 +29,18 @@ namespace kartzmax.Controllers
         }
 
         [HttpGet("api/vehicles")]
-        public async Task<IEnumerable<Vehicle>> GetVehicles()
+        public async Task<IEnumerable<VehicleResource>> GetVehicles()
         {
+            var vehicles = await repository.GetVehicles();
 
-            var vehicles = await context.Vehicles.ToListAsync();
-
-            return vehicles;
-
+            return mapper.Map<IEnumerable<Vehicle>, IEnumerable<VehicleResource>>(vehicles);
         }
 
         [HttpPost("api/vehicles")]
         public async Task<IActionResult> CreateVehicle([FromBody] SaveVehicleResource vehicleResource)
         {
-            
-          
+
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
