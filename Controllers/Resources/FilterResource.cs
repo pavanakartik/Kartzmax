@@ -4,5 +4,10 @@ namespace kartzmax.Controllers.Resources
     {
 
         public int? MakeId { get; set; }
+
+
+        public int? ModelId { get; set; }
+
+
     }
 }

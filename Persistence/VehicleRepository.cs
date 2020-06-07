@@ -63,6 +63,13 @@ namespace kartzmax.Persistence
             if (filter.MakeId.HasValue)
                 query = query.Where(v => v.Model.MakeId == filter.MakeId.Value);
 
+
+if (filter.ModelId.HasValue)
+                query = query.Where(v => v.ModelId == filter.ModelId);
+
+          
+          
+          
             return await query.ToListAsync();
 
         }
