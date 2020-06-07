@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using kartzmax.Core.Models;
 using Microsoft.EntityFrameworkCore;
@@ -48,19 +49,24 @@ namespace kartzmax.Persistence
                 .ThenInclude(m => m.Make)
               .SingleOrDefaultAsync(v => v.Id == id);
         }
-   
-   
-     
-    public async Task<IEnumerable<Vehicle>> GetVehicles()
-    {
-      return await context.Vehicles
-        .Include(v => v.Model)
-          .ThenInclude(m => m.Make)
-        .Include(v => v.Features)
-          .ThenInclude(vf => vf.Feature)
-        .ToListAsync();
-    }
 
-   
+
+
+        public async Task<IEnumerable<Vehicle>> GetVehicles(Filter filter)
+        {
+            var query = context.Vehicles
+              .Include(v => v.Model)
+                .ThenInclude(m => m.Make)
+              .Include(v => v.Features)
+                .ThenInclude(vf => vf.Feature).AsQueryable();
+
+            if (filter.MakeId.HasValue)
+                query = query.Where(v => v.Model.MakeId == filter.MakeId.Value);
+
+            return await query.ToListAsync();
+
+        }
+
+
     }
 }
