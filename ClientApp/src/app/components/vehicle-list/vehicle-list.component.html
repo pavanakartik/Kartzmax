@@ -1,4 +1,3 @@
-  
 <h2>Vehicles</h2>
 <p>
   <a [routerLink]="['/vehicles/new']" class="btn btn-primary">New Vehicle</a>
@@ -16,11 +15,16 @@
 <table class="table">
   <thead>
     <tr>
-      <th>Id</th>
-      <th (click)="sortBy('make')">Make</th>
-      <th (click)="sortBy('model')">Model</th>
-      <th (click)="sortBy('contactName')">Contact Name</th>
-      <th></th>
+      <th *ngFor="let c of columns">
+        <div *ngIf="c.isSortable" (click)="sortBy(c.key)">
+          {{ c.title }}
+          <i *ngIf="query.sortBy === c.key" class="fa" [class.fa-sort-asc]="query.isSortAscending"
+            [class.fa-sort-desc]="!query.isSortAscending"></i>
+        </div>
+        <div *ngIf="!c.isSortable">
+          {{ c.title }}
+        </div>
+      </th>
     </tr>
   </thead>
   <tbody>
