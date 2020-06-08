@@ -7,7 +7,7 @@ namespace kartzmax.Controllers.Resources
 
 
         public int? ModelId { get; set; }
-        public int? SortBy { get; set; }
+        public string SortBy { get; set; }
 
         public bool IsSortAscending { get; set; }
 

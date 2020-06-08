@@ -55,20 +55,18 @@ namespace kartzmax.Persistence
 
 
 
-        public async Task<IEnumerable<Vehicle>> GetVehicles(VehicleQuery queryObj)
+        public async Task<QueryResult<Vehicle>> GetVehicles(VehicleQuery queryObj)
         {
+
+            var result = new QueryResult<Vehicle>();
+
             var query = context.Vehicles
-       .Include(v => v.Model)
-         .ThenInclude(m => m.Make)
-       .Include(v => v.Features)
-         .ThenInclude(vf => vf.Feature)
-       .AsQueryable();
+                .Include(v => v.Model)
+                .ThenInclude(m => m.Make)
 
-            if (queryObj.MakeId.HasValue)
-                query = query.Where(v => v.Model.MakeId == queryObj.MakeId.Value);
+                .AsQueryable();
 
-            if (queryObj.ModelId.HasValue)
-                query = query.Where(v => v.ModelId == queryObj.ModelId.Value);
+            query = query.ApplyFiltering(queryObj);
 
             var columnsMap = new Dictionary<string, Expression<Func<Vehicle, object>>>()
             {
@@ -79,9 +77,15 @@ namespace kartzmax.Persistence
 
             query = query.ApplyOrdering(queryObj, columnsMap);
 
-            return await query.ToListAsync();
+            result.TotalItems = await query.CountAsync();
 
+            query = query.ApplyPaging(queryObj);
+
+            result.Items = await query.ToListAsync();
+
+            return result;
         }
+
 
 
     }
